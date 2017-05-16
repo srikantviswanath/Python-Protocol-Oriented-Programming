@@ -104,3 +104,20 @@ def _bestFit(conformeeDeps):
 			elif len(k) > len(match):
 				match = k
 	return match
+
+def ContractBreakError(Exception):
+	commonError = 'Class {conformingClass} does not abide by Contracts: {contracts}.'
+	errorMsgDict = {
+		1: commonError + 'Following required attributes are missing: \n {errorElements}',
+		2: commonError + 'Following attributes have types mismatch: \n {errorElements}',
+		3: commonError + 'Following required methods are missing: \n {errorElements}'
+	}
+	
+	def __init__(self, conformee, contracts, missingElements, enum):
+		super(ContractBreakError, self).__init__(
+			self.errorMsgDict[enum].format(
+				conformingClass = conformee,
+				contracts = contracts,
+				errorElements = missingElements
+			)
+		)
