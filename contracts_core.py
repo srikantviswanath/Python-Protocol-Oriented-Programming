@@ -57,7 +57,7 @@ def required(method):
 	'''
 
 	def requiredWrapper(self, *args):
-		raise ContractRequiredMethodInvoked(method, self)
+		raise ContractRequiredMethodInvokedError(method, self)
 	return required
 
 extensionRegistry = dict()
@@ -119,5 +119,16 @@ def ContractBreakError(Exception):
 				conformingClass = conformee,
 				contracts = contracts,
 				errorElements = missingElements
+			)
+		)
+
+def ContractRequiredMethodInvokedError(Exception):
+	errorMsg = 'Required method {method} of Contract {contract} invoked. This is only meant to be invoked by abiding classes'
+
+	def __init__(self, method, contract):
+		super(ContractRequiredMethodInvokedError, self).__init__(
+			self.errorMsg.format(
+				method = method,
+				contract = contract.__name__
 			)
 		)
