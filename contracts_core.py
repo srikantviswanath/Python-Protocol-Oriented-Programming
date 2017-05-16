@@ -14,11 +14,11 @@ def Contract(*Conformers):
 				reqdVals = map(lambda x: x.__reqdattribs__.items() if '__reqdattribs__' in x.__dict__ else list(), Conformers)
 				reqdVals = [item for sublist in reqdVals for item in sublist]
 
-				missingAttribs = self.missingAttribsValidator(reqdVals)
+				missingAttribs = self._missingAttribsValidator(reqdVals)
 				if missingAttribs:
-					raise ContractBreakError(Conformee._name__, Conformers, list(missingAttribs), 1)
+					raise ContractBreakError(Conformee.__name__, Conformers, list(missingAttribs), 1)
 
-				typeMismatch = self.attribsTypeValidator(reqdVals)
+				typeMismatch = self._attribsTypeValidator(reqdVals)
 				if typeMismatch:
 					raise ContractBreakError(Conformee.__name__, Conformers, list(typeMismatch), 2)
 
@@ -41,7 +41,7 @@ def Contract(*Conformers):
 			def _missingAttribsValidator(self, reqdVals):
 				return set(map(lambda x: x[0], reqdVals)) - set(self.conformee.__dict__.keys())
 
-			def attribsTypeValidator(self, reqdVals):
+			def _attribsTypeValidator(self, reqdVals):
 				return filter(lambda x: not isinstance(self.conformee.__dict__[x[0]], x[1]), reqdVals)
 
 		return ContractWrapper
@@ -58,10 +58,10 @@ def required(method):
 
 	def requiredWrapper(self, *args):
 		raise ContractRequiredMethodInvokedError(method, self)
-	return required
+	return requiredWrapper
 
 extensionRegistry = dict()
-def borrow(*dpeendencies):
+def borrow(*dependencies):
 	'''
 	decorator to deem an instance method of Contract class to be borrowed by abiding Conformee classes.
 	i.e., This is the place to implement common functionality for all conforming classes ala Swift protocol extensions
@@ -105,7 +105,7 @@ def _bestFit(conformeeDeps):
 				match = k
 	return match
 
-def ContractBreakError(Exception):
+class ContractBreakError(Exception):
 	commonError = 'Class {conformingClass} does not abide by Contracts: {contracts}.'
 	errorMsgDict = {
 		1: commonError + 'Following required attributes are missing: \n {errorElements}',
@@ -122,7 +122,7 @@ def ContractBreakError(Exception):
 			)
 		)
 
-def ContractRequiredMethodInvokedError(Exception):
+class ContractRequiredMethodInvokedError(Exception):
 	errorMsg = 'Required method {method} of Contract {contract} invoked. This is only meant to be invoked by abiding classes'
 
 	def __init__(self, method, contract):
