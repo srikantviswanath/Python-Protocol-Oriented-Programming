@@ -1,6 +1,8 @@
 '''
 Use case depicting the power of Contract @borrow functions that provide a place for
 implementing common functionality
+Inspired by http://www.codingexplorer.com/protocol-extensions-in-swift-2/
+Thanks to CodingExplorer
 '''
 from contracts_core import Contract, required, borrow
 
