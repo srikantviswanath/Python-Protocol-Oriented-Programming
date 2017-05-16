@@ -79,7 +79,7 @@ def borrow(*dpeendencies):
 			objDeps = map(lambda x: x.__name__, self.__protocols__)
 			objDeps.extend([self.__class__.__base__.__base__.__name__])
 			matchingDep = _bestFit(objDeps)
-			return extensionRegistry[tuple((matchingDep, methodMetaKey))][self, *args]
+			return extensionRegistry[tuple((matchingDep, methodMetaKey))](self, *args)
 		return borrowWrapper
 	return borrowDecorator
 
