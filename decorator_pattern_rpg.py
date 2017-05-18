@@ -2,6 +2,9 @@
 An example to showcase decorater pattern using Composition with Contracts.
 We attempt to create models for a simple version of LOTR flavored RPG game
 Inspired from https://medium.com/jeremy-codes/decorator-pattern-in-swift-e5fa11ea3c3f
+
+Follownig example showcases an important feature of Associatin agnosticism, which is a 
+very powerful abstraction feature
 '''
 from contracts_core import Contract, required, borrow
 
