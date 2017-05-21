@@ -7,6 +7,11 @@ def Contract(*Conformers):
 	def ContractDecorator(Conformee):
 
 		class ContractWrapper(Conformee):
+			'''
+			This class intercepts the instantiation of Conformee class - to do it's Contract magic, i.e., 
+			check adherence to Contract blueprint. If successful, inject methods decorated with @borrow keyword
+			into the scope of an instance of Conformee class
+			'''
 
 			def __init__(self, *args):
 				self.missingReqdMethods = dict()
@@ -39,10 +44,23 @@ def Contract(*Conformers):
 				setattr(self.__class__, '__protocols__', Conformers)
 
 			def _missingAttribsValidator(self, reqdVals):
+				'''
+				Validator method to validate the presence of attributes mentioned in Contract's __reqdattribs__
+				within the scope of Conformee's instance
+				'''
 				return set(map(lambda x: x[0], reqdVals)) - set(self.conformee.__dict__.keys())
 
 			def _attribsTypeValidator(self, reqdVals):
-				return filter(lambda x: not isinstance(self.conformee.__dict__[x[0]], x[1]), reqdVals)
+				'''
+				Validator method to validate Contract's binding w.r.t to __reqdattribs__. It checks for 
+				each attribute mentioned in __reqdattribs__ to have some kind of association with the type
+				specified. Association can mean Type inheritence or Contract binding
+				'''
+				return filter(
+					lambda x: not isinstance(self.conformee.__dict__[x[0]], x[1]) and \
+						x[1] not in (self.conformee.__dict__[x[0]].__class__.__protocols__ \
+							if hasattr(self.conformee.__dict__[x[0]].__class__, '__protocols__') else list()), reqdVals
+				)
 
 		return ContractWrapper
 	return ContractDecorator
